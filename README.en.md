@@ -2,9 +2,11 @@
 
 [简体中文](README.md)
 
-A Windows Explorer context-menu launcher for a Microsoft Store ChatGPT/Codex issue where Explorer tries to launch the protected `WindowsApps\\...\\ChatGPT.exe` directly and receives an access-denied error.
+## Background
 
-The launcher opens ChatGPT through the Windows application-activation API and passes the selected folder through `--open-project`. On a cold start, it waits for the main window and sends the project path a second time.
+After installing Microsoft Store ChatGPT/Codex, some users can see **Open project in ChatGPT** in a folder's context menu but receive a “Windows cannot access the specified device, path, or file” error when selecting it. See [Issue #1](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/1) for the original report and screenshots.
+
+This project addresses the access-denied scenario where Explorer tries to launch the protected `WindowsApps\\...\\ChatGPT.exe` directly. The launcher instead opens ChatGPT through the Windows application-activation API and passes the selected folder through `--open-project`. On a cold start, it waits for the main window and sends the project path a second time.
 
 ## Features
 

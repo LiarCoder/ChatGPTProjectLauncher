@@ -2,9 +2,11 @@
 
 [English](README.en.md)
 
-一个 Windows 右键菜单启动器，用于解决部分 Microsoft Store 版 ChatGPT/Codex 在资源管理器中直接启动受保护的 `WindowsApps\\...\\ChatGPT.exe` 时出现“拒绝访问”的问题。
+## 项目背景
 
-它通过 Windows 的应用激活接口打开 ChatGPT，并把被右键点击的目录作为 `--open-project` 参数传入。若 ChatGPT 尚未启动，启动器会等待主窗口就绪后再次投递项目路径，从而兼顾冷启动场景。
+部分用户安装 Microsoft Store 版 ChatGPT/Codex 后，可以在文件夹右键菜单中看到 **Open project in ChatGPT**，但点击时会收到“Windows 无法访问指定设备、路径或文件”的错误。原始问题描述和截图见 [Issue #1](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/1)。
+
+本项目用于处理资源管理器直接启动受保护的 `WindowsApps\\...\\ChatGPT.exe` 时出现的访问拒绝问题。启动器改用 Windows 应用激活接口打开 ChatGPT，并把被右键点击的目录作为 `--open-project` 参数传入；若 ChatGPT 尚未启动，则等待主窗口就绪后再次投递项目路径，从而兼顾冷启动场景。
 
 ## 功能
 
