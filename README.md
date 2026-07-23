@@ -18,7 +18,9 @@
 
 - Windows 10 或 Windows 11
 - 已安装 Microsoft Store 版 ChatGPT/Codex，并且该版本支持 `--open-project`
-- .NET 8 SDK，或带有 .NET 桌面开发工作负载的 Visual Studio 2022
+- 仅构建时需要 .NET 8 SDK，或带有 .NET 桌面开发工作负载的 Visual Studio 2022；安装方法见 [如何安装 .NET 8 SDK](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/2)
+
+最终生成的 EXE 是自包含程序，使用它的设备不需要预先安装 .NET。
 
 当前源代码默认使用的应用 AUMID 是 `OpenAI.Codex_2p2nqsd0c76g0!App`。若未来 ChatGPT/Codex 的包标识或启动参数发生变化，需要调整 [OpenProjectInChatGPTLauncher.cs](OpenProjectInChatGPTLauncher.cs) 中的常量后重新构建。
 
@@ -30,10 +32,16 @@ Get-StartApps | Where-Object { $_.Name -match 'ChatGPT|Codex' }
 
 ## 构建
 
-在仓库根目录执行：
+先确认终端能够找到 .NET SDK：
 
 ```powershell
-dotnet publish .\OpenProjectInChatGPTLauncher.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
+dotnet --info
+```
+
+如果提示找不到 `dotnet` 命令，请参考 [安装说明](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/2)。确认 SDK 可用后，在仓库根目录执行：
+
+```powershell
+dotnet publish .\OpenProjectInChatGPTLauncher.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
 ```
 
 生成的启动器位于：
@@ -80,4 +88,3 @@ powershell -ExecutionPolicy Bypass -File .\Install-ContextMenu.ps1 -Uninstall
 这是一个独立的社区项目，与 OpenAI 没有从属、赞助或背书关系。ChatGPT、OpenAI 及相关标志属于各自权利人。图标仅用于识别其启动目标；分发再品牌版本时，请使用自己的图标并避免暗示官方关系。
 
 本项目采用 [MIT License](LICENSE)。
-

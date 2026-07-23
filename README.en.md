@@ -18,7 +18,9 @@ The launcher opens ChatGPT through the Windows application-activation API and pa
 
 - Windows 10 or Windows 11
 - Microsoft Store ChatGPT/Codex with support for `--open-project`
-- .NET 8 SDK, or Visual Studio 2022 with the .NET desktop development workload
+- The .NET 8 SDK, or Visual Studio 2022 with the .NET desktop development workload, is required only to build the launcher; see [How to install the .NET 8 SDK](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/2)
+
+The resulting EXE is self-contained, so .NET does not need to be installed on the device that runs it.
 
 The code currently uses `OpenAI.Codex_2p2nqsd0c76g0!App` as the application AUMID. If a future ChatGPT/Codex update changes its package identity or launch arguments, update the constants in [OpenProjectInChatGPTLauncher.cs](OpenProjectInChatGPTLauncher.cs) and rebuild.
 
@@ -30,10 +32,16 @@ Get-StartApps | Where-Object { $_.Name -match 'ChatGPT|Codex' }
 
 ## Build
 
-Run this from the repository root:
+First, verify that the .NET SDK is available in the terminal:
 
 ```powershell
-dotnet publish .\OpenProjectInChatGPTLauncher.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
+dotnet --info
+```
+
+If the `dotnet` command is not found, follow the [.NET 8 SDK installation guide](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/2). Once the SDK is available, run this from the repository root:
+
+```powershell
+dotnet publish .\OpenProjectInChatGPTLauncher.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
 ```
 
 The launcher will be written to:
@@ -80,4 +88,3 @@ This removes only the per-user entry created at `HKCU\Software\Classes\Directory
 This is an independent community project. It is not affiliated with, sponsored by, or endorsed by OpenAI. ChatGPT, OpenAI, and their related marks belong to their respective owners. The icon identifies the launch target only; use your own icon for redistributed or rebranded versions and do not imply an official relationship.
 
 This project is available under the [MIT License](LICENSE).
-
