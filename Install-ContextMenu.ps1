@@ -1,14 +1,42 @@
 [CmdletBinding()]
 param(
-    [string]$LauncherPath = (Join-Path $PSScriptRoot 'OpenProjectInChatGPTLauncher.exe'),
+    [string]$LauncherPath,
     [switch]$Uninstall
 )
 
-$menuKey = 'HKCU:\Software\Classes\Directory\shell\OpenProjectInChatGPTLauncher'
+# $PSScriptRoot is still empty while parameter defaults are evaluated, so resolve
+# the default launcher path here instead of in the param() block.
+if (-not $LauncherPath) {
+    $LauncherPath = Join-Path $PSScriptRoot 'OpenProjectInChatGPTLauncher.exe'
+}
+
+$launcherExeName = 'OpenProjectInChatGPTLauncher.exe'
+$menuRoot = 'HKCU:\Software\Classes\Directory\shell'
+$menuKey = Join-Path $menuRoot 'OpenProjectInChatGPTLauncher'
 
 if ($Uninstall) {
-    Remove-Item -LiteralPath $menuKey -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Host 'Removed the Open project in ChatGPT context-menu entry'
+    # Installs made by hand, or by an older revision of this script, may sit under a
+    # different key name, so match on the command line rather than one fixed name.
+    $removed = 0
+    foreach ($key in Get-ChildItem -LiteralPath $menuRoot -ErrorAction SilentlyContinue) {
+        $command = (Get-ItemProperty -LiteralPath "$($key.PSPath)\command" -Name '(default)' -ErrorAction SilentlyContinue).'(default)'
+        if ($command -notlike "*$launcherExeName*") { continue }
+
+        Remove-Item -LiteralPath $key.PSPath -Recurse -Force
+        Write-Host "Removed the Open project in ChatGPT context-menu entry at $menuRoot\$($key.PSChildName)"
+        $removed++
+    }
+
+    # Fall back to the canonical name in case the command line no longer matches it.
+    if ($removed -eq 0 -and (Test-Path -LiteralPath $menuKey)) {
+        Remove-Item -LiteralPath $menuKey -Recurse -Force
+        Write-Host "Removed the Open project in ChatGPT context-menu entry at $menuKey"
+        $removed++
+    }
+
+    if ($removed -eq 0) {
+        Write-Host "No $launcherExeName context-menu entry was found; nothing to remove"
+    }
     exit 0
 }
 
