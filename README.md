@@ -2,9 +2,15 @@
 
 [English](README.en.md)
 
+> **⚠️ 本项目已停用（2026-09-19）**
+>
+> 官方 ChatGPT/Codex 客户端自 `OpenAI.Codex 26.915.4065.0` 起已修复该问题，自带的 **Open project in ChatGPT** 右键菜单现在可以正常打开项目，不再需要本启动器。
+>
+> 如果你安装过本项目的菜单项，请按 [卸载](#卸载) 一节将其移除，避免右键菜单中出现两条同名项。仓库保留作为历史存档，代码不再维护。
+
 ## 项目背景
 
-部分用户安装 Microsoft Store 版 ChatGPT/Codex 后，可以在文件夹右键菜单中看到 **Open project in ChatGPT**，但点击时会收到“Windows 无法访问指定设备、路径或文件”的错误。原始问题描述和截图见 [Issue #1](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/1)。
+部分用户安装 Microsoft Store 版 ChatGPT/Codex 后，可以在文件夹右键菜单中看到 **Open project in ChatGPT**，但点击时会收到“Windows 无法访问指定设备、路径或文件”的错误。原始问题描述和截图见 [Issue #1](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/1)。该问题现已由官方修复，见顶部停用说明。
 
 本项目用于处理资源管理器直接启动受保护的 `WindowsApps\\...\\ChatGPT.exe` 时出现的访问拒绝问题。启动器改用 Windows 应用激活接口打开 ChatGPT，并把被右键点击的目录作为 `--open-project` 参数传入；若 ChatGPT 尚未启动，则等待主窗口就绪后再次投递项目路径，从而兼顾冷启动场景。
 
@@ -77,7 +83,13 @@ bin\Release\net8.0-windows\win-x64\publish\OpenProjectInChatGPTLauncher.exe
 powershell -ExecutionPolicy Bypass -File .\Install-ContextMenu.ps1 -Uninstall
 ```
 
-这只会删除本项目在 `HKCU\Software\Classes\Directory\shell\OpenProjectInChatGPTLauncher` 创建的当前用户菜单项，不会删除 ChatGPT/Codex 或其项目文件夹。
+脚本会扫描 `HKCU\Software\Classes\Directory\shell` 下所有命令行指向 `OpenProjectInChatGPTLauncher.exe` 的菜单项并逐一删除，因此手工创建或用其他键名（例如 `OpenProjectInChatGPTFixed`）安装的项同样能被清理；没有可删除的项时会明确提示，而不是谎报成功。该操作只影响当前用户的这一项菜单，不会删除 ChatGPT/Codex、项目文件夹或官方自带的菜单项。
+
+如果连启动器本体一起清理：
+
+```powershell
+Remove-Item -LiteralPath "$env:LOCALAPPDATA\OpenAI\OpenProjectInChatGPTLauncher.exe" -Force
+```
 
 ## 故障排查
 

@@ -2,9 +2,15 @@
 
 [简体中文](README.md)
 
+> **⚠️ This project is discontinued (2026-09-19)**
+>
+> The official ChatGPT/Codex client fixed this problem as of `OpenAI.Codex 26.915.4065.0`. Its built-in **Open project in ChatGPT** context-menu entry now opens projects correctly, so this launcher is no longer needed.
+>
+> If you installed this project's menu entry, follow [Uninstall](#uninstall) to remove it and avoid two identically named entries in the context menu. The repository is kept as a historical archive and is no longer maintained.
+
 ## Background
 
-After installing Microsoft Store ChatGPT/Codex, some users can see **Open project in ChatGPT** in a folder's context menu but receive a “Windows cannot access the specified device, path, or file” error when selecting it. See [Issue #1](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/1) for the original report and screenshots.
+After installing Microsoft Store ChatGPT/Codex, some users can see **Open project in ChatGPT** in a folder's context menu but receive a “Windows cannot access the specified device, path, or file” error when selecting it. See [Issue #1](https://github.com/LiarCoder/ChatGPTProjectLauncher/issues/1) for the original report and screenshots. The problem has since been fixed by the vendor; see the discontinuation notice above.
 
 This project addresses the access-denied scenario where Explorer tries to launch the protected `WindowsApps\\...\\ChatGPT.exe` directly. The launcher instead opens ChatGPT through the Windows application-activation API and passes the selected folder through `--open-project`. On a cold start, it waits for the main window and sends the project path a second time.
 
@@ -77,7 +83,13 @@ Run:
 powershell -ExecutionPolicy Bypass -File .\Install-ContextMenu.ps1 -Uninstall
 ```
 
-This removes only the per-user entry created at `HKCU\Software\Classes\Directory\shell\OpenProjectInChatGPTLauncher`. It does not remove ChatGPT/Codex or any project folders.
+The script scans `HKCU\Software\Classes\Directory\shell` for every entry whose command line points at `OpenProjectInChatGPTLauncher.exe` and removes each one, so entries installed by hand or under a different key name (such as `OpenProjectInChatGPTFixed`) are cleaned up too. It reports when there is nothing to remove instead of claiming success. The operation only affects this per-user entry; it does not remove ChatGPT/Codex, any project folder, or the vendor-provided menu entry.
+
+To remove the launcher executable as well:
+
+```powershell
+Remove-Item -LiteralPath "$env:LOCALAPPDATA\OpenAI\OpenProjectInChatGPTLauncher.exe" -Force
+```
 
 ## Troubleshooting
 
